@@ -16,22 +16,37 @@
 
 # Globals
 PROG="${0##*/}"
+PROGDIR=$(dirname "$(readlink -f "${0}")")
 
 # Options
 VERBOSE=
+
+# Source utility
+. "${PROGDIR}/../lib/bash/util.sh"
+
+# Exit statuses
+# EACTION=10
 
 # ******************************************************************************
 # Main
 main()
 {
-    [ $# -eq 0 ] && usage && exit 0
-
+    # Setup options
+    if [ $# -eq 0 ]; then
+        usage
+        exit 0
+    fi
     short="hv"
     long="help,verbose"
     args=$(getopt -o "${short}" --long "${long}" --name "${PROG}" -- "${@}")
-
-    [ $? -ne 0 ] && usage && exit 1
+    if [ $? -ne 0 ]; then
+        usage
+        exit 1
+    fi
     eval set -- "${args}"
+
+    # Define options
+    local PARSED=
 
     # Parse options
     while true; do
@@ -53,7 +68,19 @@ main()
                 ;;
         esac
         shift
+        PARSED=true
     done
+
+    # Run options
+    if [ -z "${PARSED}" ]; then
+        print_err "No options specified. See '--help' for more information."
+        exit ${EARG}
+    elif [ -n "${OPTION}" ]; then
+        # Execute option
+        :
+    else
+        :
+    fi
 }
 
 # ******************************************************************************
