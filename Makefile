@@ -1,4 +1,4 @@
-# Project name
+# Project
 PROJECT = NAME
 
 # Compiler settings
